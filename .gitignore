@@ -1,0 +1,19 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# ide
+.vscode/*
+
+# python cache
+__pycache__/
+*.pyc
+
+# key
+device/encryptor/master_key
+device/encryptor/id
+server/id_masterkey
+generate_key.bat
+
+# data
+server/data

@@ -1,0 +1,21 @@
+[workspace]
+authors = ["czt0221 <2320231515@qq.com>"]
+channels = ["conda-forge"]
+name = "sm4-iot-secure"
+platforms = ["win-64"]
+version = "0.1.0"
+
+[pypi-options]
+index-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+extra-index-urls = ["https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple", "https://pypi.douban.com/simple", "https://mirrors.aliyun.com/pypi/simple/"]
+
+[tasks]
+server = "python -m server.main"
+device = "python -m device.main"
+
+[dependencies]
+python = ">=3.14.4,<3.15"
+cryptography = ">=46.0.7,<47"
+
+[pypi-dependencies]
+pyntp = ">=0.1.1, <0.2"
