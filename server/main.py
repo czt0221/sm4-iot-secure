@@ -4,6 +4,8 @@ import argparse
 import logging
 from pathlib import Path
 
+from server.database import ServerDatabase
+from server.gui import ServerGUI
 from server.receive import UDPServer
 
 
@@ -15,7 +17,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--server-dir",
         default=Path(__file__).resolve().parent,
         type=Path,
-        help="directory containing id_masterkey and data files",
+        help="directory containing the server database",
     )
     parser.add_argument(
         "--log-level",
@@ -35,6 +37,11 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         help="replay cache TTL in seconds; defaults to max(10, 2 * max-time-skew)",
     )
+    parser.add_argument(
+        "--headless",
+        action="store_true",
+        help="run UDP server without launching the GUI",
+    )
     return parser
 
 
@@ -44,14 +51,27 @@ def main() -> None:
         level=getattr(logging, args.log_level),
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
-    server = UDPServer(
+
+    if args.headless:
+        database = ServerDatabase(args.server_dir / "server.db")
+        server = UDPServer(
+            host=args.host,
+            port=args.port,
+            database=database,
+            max_time_skew=args.max_time_skew,
+            replay_ttl=args.replay_ttl,
+        )
+        server.serve_forever()
+        return
+
+    app = ServerGUI(
         host=args.host,
         port=args.port,
         server_dir=args.server_dir,
         max_time_skew=args.max_time_skew,
         replay_ttl=args.replay_ttl,
     )
-    server.serve_forever()
+    app.run()
 
 
 if __name__ == "__main__":

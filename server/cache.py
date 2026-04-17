@@ -21,3 +21,6 @@ class ReplayCache:
     def add(self, device_id: int, timestamp: int) -> None:
         self._purge()
         self._entries[(device_id, timestamp)] = time.monotonic() + self.ttl_seconds
+
+    def clear(self) -> None:
+        self._entries.clear()

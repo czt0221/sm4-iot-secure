@@ -33,6 +33,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/vc14_runtime-14.44.35208-h818238b_34.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/vcomp14-14.44.35208-h818238b_34.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/zstd-1.5.7-h534d264_6.conda
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/6d/e9/cea6430edeab9754bd9d94fef82d007892d2b18d1d82a54d8915718eac9a/ezpip-0.2.5-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/56/93/a451db96af1d4a67756dadb909eabe0eb2f2b88849172e4d3daef2817090/fies-1.6.0-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/13/e0/f6ccd48a477e1abd566962a7c829c06e0c7cc0fa38717717513da30c90e4/iter_backoff-0.0.0-py3-none-any.whl
@@ -42,7 +43,23 @@ environments:
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/96/8b/93cb74103f90ac62079f82999bb39d15d25721b0d2e7b9ee55495c130bd9/relpath-3.0.5-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/59/35/131d6a8fc181bbd3106f72439cd3c438e480e935aae6e93bc6657f78a192/rename_lock-0.1.4-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/03/8f/7e0e85375e3b061c0db9ce873acb57d3311fe86e214e9344757a41a050f5/sout-1.2.1-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/e9/d4/9528ea6ecb5d4394f425df651957da6f6a715b41c5b12d43d41888c14394/tkcalendar-1.6.1-py3-none-any.whl
 packages:
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/77/f5/21d2de20e8b8b0408f0681956ca2c69f1320a3848ac50e6e7f39c6159675/babel-2.18.0-py3-none-any.whl
+  name: babel
+  version: 2.18.0
+  sha256: e2b422b277c2b9a9630c1d7903c2a00d0830c409c59ac8cae9081c92f1aeba35
+  requires_dist:
+  - pytz>=2015.7 ; python_full_version < '3.9'
+  - tzdata ; sys_platform == 'win32' and extra == 'dev'
+  - backports-zoneinfo ; python_full_version < '3.9' and extra == 'dev'
+  - freezegun~=1.0 ; extra == 'dev'
+  - jinja2>=3.0 ; extra == 'dev'
+  - pytest-cov ; extra == 'dev'
+  - pytest>=6.0 ; extra == 'dev'
+  - pytz ; extra == 'dev'
+  - setuptools ; extra == 'dev'
+  requires_python: '>=3.8'
 - conda: https://conda.anaconda.org/conda-forge/win-64/bzip2-1.0.8-h0ad9c76_9.conda
   sha256: 76dfb71df5e8d1c4eded2dbb5ba15bb8fb2e2b0fe42d94145d5eed4c75c35902
   md5: 4cb8e6b48f67de0b018719cdf1136306
@@ -308,6 +325,12 @@ packages:
   purls: []
   size: 3526350
   timestamp: 1769460339384
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/e9/d4/9528ea6ecb5d4394f425df651957da6f6a715b41c5b12d43d41888c14394/tkcalendar-1.6.1-py3-none-any.whl
+  name: tkcalendar
+  version: 1.6.1
+  sha256: 9d3a80816a7b32d64fab696fa3d2a007fb23c87953267d5e343a38ff4cd7c15c
+  requires_dist:
+  - babel
 - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
   sha256: 1d30098909076af33a35017eed6f2953af1c769e273a0626a04722ac4acaba3c
   md5: ad659d0a2b3e47e38d829aa8cad2d610

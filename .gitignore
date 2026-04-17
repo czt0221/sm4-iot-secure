@@ -10,10 +10,14 @@ __pycache__/
 *.pyc
 
 # key
-device/encryptor/master_key
 device/encryptor/id
-server/id_masterkey
+device/encryptor/master_key
 generate_key.bat
 
 # data
-server/data
+server/server.db
+server/server.db-shm
+server/server.db-wal
+
+#config
+gui_state.json

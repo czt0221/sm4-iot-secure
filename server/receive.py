@@ -4,7 +4,7 @@ import logging
 import socket
 import struct
 import time
-from pathlib import Path
+from collections.abc import Callable
 
 from cryptography.exceptions import InvalidTag
 
@@ -23,25 +23,46 @@ class UDPServer:
         self,
         host: str,
         port: int,
-        server_dir: Path,
+        database: ServerDatabase,
         max_time_skew: int = 30,
         replay_ttl: int | None = None,
+        event_callback: Callable[[str, str], None] | None = None,
     ) -> None:
-        self.database = ServerDatabase(server_dir)
+        self.database = database
         self.max_time_skew = max_time_skew
         self.replay_ttl = replay_ttl if replay_ttl is not None else max(10, max_time_skew * 2)
         self.cache = ReplayCache(ttl_seconds=self.replay_ttl)
+        self._event_callback = event_callback
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._socket.bind((host, port))
-        LOGGER.info("listening on %s:%s", host, port)
+        self._running = True
+        self._emit("info", "listening on %s:%s", host, port)
+
+    def _emit(self, level: str, message: str, *args: object) -> None:
+        log_method = getattr(LOGGER, level, LOGGER.info)
+        log_method(message, *args)
+        if self._event_callback is not None:
+            formatted = message % args if args else message
+            self._event_callback(level, formatted)
 
     def serve_forever(self) -> None:
-        while True:
-            data, address = self._socket.recvfrom(4096)
+        while self._running:
+            try:
+                data, address = self._socket.recvfrom(4096)
+            except OSError:
+                break
+
             try:
                 self.handle_datagram(data)
             except Exception as exc:  # pragma: no cover - defensive boundary
-                LOGGER.warning("failed to handle packet from %s: %s", address, exc)
+                self._emit("warning", "failed to handle packet from %s: %s", address, exc)
+
+    def close(self) -> None:
+        self._running = False
+        try:
+            self._socket.close()
+        except OSError:
+            pass
 
     def handle_datagram(self, data: bytes) -> None:
         packet = UDPPacket.from_bytes(data)
@@ -62,18 +83,19 @@ class UDPServer:
             raise ValueError("invalid GCM tag") from exc
 
         measurements = self._parse_measurements(packet.device_id, packet.timestamp, plaintext)
-        self.database.append_measurements(measurements)
+        stored_count = self.database.append_measurements(measurements)
         self.cache.add(packet.device_id, packet.timestamp)
 
-        if measurements:
-            LOGGER.info(
+        if stored_count > 0:
+            self._emit(
+                "info",
                 "stored %s measurements from device=%s timestamp=%s",
-                len(measurements),
+                stored_count,
                 packet.device_id,
                 packet.timestamp,
             )
         else:
-            LOGGER.warning("received packet with only padding from device=%s", packet.device_id)
+            self._emit("warning", "received packet with no storable data from device=%s", packet.device_id)
 
     def _validate_timestamp(self, timestamp: int) -> None:
         current_time = int(time.time())
