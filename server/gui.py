@@ -458,6 +458,7 @@ class ServerGUI:
         ttk.Button(top, text="删除设备", command=self.delete_selected_device).pack(side=tk.LEFT, padx=(0, 8))
         ttk.Button(top, text="刷新设备列表", command=self.refresh_devices).pack(side=tk.LEFT)
         ttk.Button(top, text="写入设备目录", command=self.export_selected_device).pack(side=tk.LEFT, padx=(8, 0))
+        ttk.Button(top, text="从设备目录导入", command=self.import_device_from_directory).pack(side=tk.LEFT, padx=(8, 0))
 
         tree_frame = ttk.Frame(parent)
         tree_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
@@ -792,6 +793,52 @@ class ServerGUI:
         messagebox.showinfo(
             "写入完成",
             f"已覆盖写入以下文件：\n{target_dir / 'id'}\n{target_dir / 'master_key'}",
+        )
+
+    def import_device_from_directory(self) -> None:
+        chosen_dir = filedialog.askdirectory(title="选择设备目录")
+        if not chosen_dir:
+            return
+
+        base_dir = Path(chosen_dir)
+        source_dir = base_dir if base_dir.name == "encryptor" else base_dir / "encryptor"
+        id_path = source_dir / "id"
+        key_path = source_dir / "master_key"
+
+        if not id_path.exists() or not key_path.exists():
+            messagebox.showerror(
+                "导入失败",
+                f"未找到以下文件：\n{id_path}\n{key_path}",
+            )
+            return
+
+        try:
+            device_id = int(id_path.read_text(encoding="utf-8").strip())
+        except ValueError:
+            messagebox.showerror("导入失败", f"{id_path} 中的设备 ID 无效。")
+            return
+        except OSError as exc:
+            messagebox.showerror("导入失败", str(exc))
+            return
+
+        try:
+            master_key_hex = key_path.read_text(encoding="utf-8").strip()
+        except OSError as exc:
+            messagebox.showerror("导入失败", str(exc))
+            return
+
+        try:
+            record = self.database.import_device(device_id=device_id, master_key_hex=master_key_hex)
+        except ValueError as exc:
+            messagebox.showerror("导入失败", str(exc))
+            return
+
+        self.refresh_devices()
+        self.refresh_measurements(show_errors=False)
+        self._append_log("INFO", f"已从 {source_dir.as_posix()} 导入设备 {record.device_id}")
+        messagebox.showinfo(
+            "导入完成",
+            f"设备ID: {record.device_id}\n主密钥: {record.master_key_hex}\n备注: {record.note or '(空)'}",
         )
 
     def clear_measurements(self) -> None:

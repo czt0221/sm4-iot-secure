@@ -124,6 +124,39 @@ class ServerDatabase:
             created_at=created["created_at"],
         )
 
+    def import_device(self, device_id: int, master_key_hex: str, note: str = "") -> DeviceRecord:
+        normalized_key = master_key_hex.strip().upper()
+        if len(normalized_key) != 32:
+            raise ValueError("主密钥长度必须为 32 个十六进制字符。")
+        try:
+            bytes.fromhex(normalized_key)
+        except ValueError as exc:
+            raise ValueError("主密钥必须是有效的十六进制字符串。") from exc
+
+        with self._connect() as connection:
+            existing = connection.execute(
+                "SELECT 1 FROM devices WHERE id = ?",
+                (device_id,),
+            ).fetchone()
+            if existing is not None:
+                raise ValueError(f"设备 ID {device_id} 已存在，无法导入。")
+
+            connection.execute(
+                "INSERT INTO devices (id, master_key_hex, note) VALUES (?, ?, ?)",
+                (device_id, normalized_key, note),
+            )
+            created = connection.execute(
+                "SELECT created_at FROM devices WHERE id = ?",
+                (device_id,),
+            ).fetchone()
+
+        return DeviceRecord(
+            device_id=device_id,
+            master_key_hex=normalized_key,
+            note=note,
+            created_at=created["created_at"],
+        )
+
     def update_device_note(self, device_id: int, note: str) -> None:
         with self._connect() as connection:
             connection.execute(

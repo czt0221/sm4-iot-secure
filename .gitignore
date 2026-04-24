@@ -12,7 +12,6 @@ __pycache__/
 # key
 device/encryptor/id
 device/encryptor/master_key
-generate_key.bat
 
 # data
 server/server.db
@@ -20,4 +19,4 @@ server/server.db-shm
 server/server.db-wal
 
 #config
-gui_state.json
+server/gui_state.json

@@ -6,7 +6,7 @@
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)
 ![GUI](https://img.shields.io/badge/GUI-tkinter%20%2B%20tkcalendar-1F2937)
 
-`sm4-iot-secure` 是一个基于 Python 的物联网安全通信示例项目，包含设备端 `device` 与服务端 `server` 两部分。项目聚焦于温度数据的安全传输，实现了设备端采样、`SM4-GCM` 加密、UDP 通信、渐进式时间同步，以及服务端验包、解密、入库和图形化管理。
+`sm4-iot-secure` 是一个基于 Python 的物联网安全通信示例项目，围绕温度数据的安全传输实现设备端加密发送、UDP 通信、渐进式时间同步，以及服务端验包、解密、入库和图形化管理。
 
 ## 功能概览
 
@@ -15,13 +15,13 @@
 - 当 `timestamp % 8 == 0` 时发送 1 个固定长度 UDP 报文
 - 使用 `HMAC-SM3` 按小时派生 `SM4` 会话密钥
 - 使用 `SM4-GCM` 对 8 个温度编码值进行认证加密
-- 服务端收到数据后写入本地 SQLite 数据库
+- 服务端收到数据后写入本地 `SQLite` 数据库
 - 服务端每次收到 UDP 报文都会动态查询数据库中的设备 ID 和主密钥
-- 服务端提供图形化界面，支持数据筛选、设备管理和 SQL 控制台
+- 服务端提供图形界面，支持数据筛选、设备管理和 SQL 控制台
 
 ## 技术栈
 
-- `Python`
+- `Python 3.14`
 - `pixi`
 - `cryptography`
 - `pyntp`
@@ -34,10 +34,10 @@
 ### 环境要求
 
 - `Windows`
-- `pixi`
+- 已安装 `pixi`
 - 可访问 `pool.ntp.org`
 
-安装环境：
+### 安装依赖
 
 ```powershell
 pixi install
@@ -77,65 +77,71 @@ pixi run device --host 127.0.0.1 --port 9999 --sync-interval 60
 
 ## 项目结构
 
+### 仓库文件
+
 ```text
 sm4-iot-secure/
 ├── .gitattributes                  # Git 属性配置
 ├── .gitignore                      # Git 忽略规则
-├── pixi.toml                       # pixi 项目配置与任务定义
-├── pixi.lock                       # pixi 依赖锁文件
+├── pixi.toml                       # pixi 环境、依赖和任务定义
+├── pixi.lock                       # pixi 锁文件
 ├── README.md                       # 项目说明文档
 ├── device/                         # 设备端代码
 │   ├── __init__.py                 # 设备端包标记
 │   ├── main.py                     # 设备端主入口，负责采样、缓存、加密、发送
-│   ├── sensor/                     # 传感器模块
-│   │   ├── __init__.py             # 传感器子包标记
-│   │   ├── sensor.py               # 传感器统一入口
-│   │   ├── fake.py                 # 模拟温度数据生成
-│   │   └── float_to_byte.py        # 温度浮点值编码为 uint16
-│   ├── encryptor/                  # 加密模块
+│   ├── encryptor/                  # 设备端加密与凭据目录
 │   │   ├── __init__.py             # 加密子包标记
-│   │   ├── id                      # 当前设备 ID 配置文件
-│   │   ├── master_key              # 当前设备主密钥配置文件
 │   │   ├── encryptor.py            # 加密入口与小时密钥缓存
-│   │   ├── random.py               # IV 生成
+│   │   ├── generate_key.bat        # 为 device 生成 id 和 master_key 的脚本
 │   │   ├── hmac_sm3.py             # HMAC-SM3 小时密钥派生
+│   │   ├── random.py               # IV 生成
 │   │   └── sm4_gcm.py              # SM4-GCM 加密实现
-│   └── network/                    # 网络与时间同步模块
-│       ├── __init__.py             # 网络子包标记
-│       ├── network.py              # 网络模块入口
-│       ├── send.py                 # UDP 发送
-│       ├── udp.py                  # UDP 报文结构
-│       └── time.py                 # 渐进式时间同步与设备时钟
+│   ├── network/                    # 网络通信与时间同步
+│   │   ├── __init__.py             # 网络子包标记
+│   │   ├── network.py              # 网络模块入口
+│   │   ├── send.py                 # UDP 发送逻辑
+│   │   ├── time.py                 # 渐进式时间同步与设备时钟
+│   │   └── udp.py                  # UDP 报文封装
+│   └── sensor/                     # 温度采样与编码
+│       ├── __init__.py             # 传感器子包标记
+│       ├── fake.py                 # 模拟温度数据生成
+│       ├── float_to_byte.py        # 温度浮点值编码为 uint16
+│       └── sensor.py               # 传感器统一入口
 └── server/                         # 服务端代码
     ├── __init__.py                 # 服务端包标记
-    ├── main.py                     # 服务端主入口
-    ├── gui.py                      # 图形化管理界面
-    ├── receive.py                  # UDP 接收、验包、解密、入库流程
-    ├── database.py                 # SQLite 数据库访问封装
-    ├── cache.py                    # 防重放缓存
-    ├── udp.py                      # UDP 报文解析
-    ├── hmac_sm3.py                 # HMAC-SM3 小时密钥派生
-    ├── sm4_gcm.py                  # SM4-GCM 解密实现
     ├── byte_to_float.py            # uint16 温度值解码
-    ├── server.db                   # SQLite 数据库主文件，运行后生成
-    ├── server.db-shm               # SQLite 共享内存文件，运行中可能生成
-    ├── server.db-wal               # SQLite WAL 日志文件，运行中可能生成
-    └── gui_state.json              # GUI 上次筛选与排序状态，运行后生成
+    ├── cache.py                    # 防重放缓存
+    ├── database.py                 # SQLite 数据库访问封装
+    ├── gui.py                      # 图形化管理界面
+    ├── hmac_sm3.py                 # HMAC-SM3 小时密钥派生
+    ├── main.py                     # 服务端主入口
+    ├── receive.py                  # UDP 接收、验包、解密、入库流程
+    ├── sm4_gcm.py                  # SM4-GCM 解密实现
+    └── udp.py                      # UDP 报文解析
 ```
+
+### 运行后生成的文件
+
+- `device/encryptor/id`
+  - 设备 ID 配置文件
+- `device/encryptor/master_key`
+  - 设备主密钥配置文件
+- `server/server.db`
+  - SQLite 数据库主文件
+- `server/server.db-shm`
+  - SQLite 共享内存文件
+- `server/server.db-wal`
+  - SQLite WAL 日志文件
+- `server/gui_state.json`
+  - GUI 保存的上次设备筛选与排序状态
 
 ## 数据库存储
 
-服务端使用本地单文件 `SQLite` 数据库存储设备信息与采集数据：
+服务端使用本地单文件 `SQLite` 数据库存储设备信息与测量数据：
 
 ```text
 server/server.db
 ```
-
-数据库存储方式说明：
-
-- 使用本地单文件数据库
-- 不依赖独立数据库服务
-- 图形界面、UDP 接收逻辑与 SQL 控制台共用同一个数据库文件
 
 数据库包含两张核心表：
 
@@ -168,11 +174,7 @@ server/server.db
 
 ## 服务端图形界面
 
-服务端界面包含三个页面。
-
-### 1. 数据管理
-
-支持以下功能：
+### 数据管理
 
 - 按设备筛选
 - 按时间范围筛选
@@ -191,19 +193,16 @@ server/server.db
 - 原始时间戳
 - 温度值
 
-### 2. 设备管理
-
-支持以下功能：
+### 设备管理
 
 - 分配新的设备 ID 与主密钥
 - 查看所有已分配设备
 - 通过弹窗修改设备备注
 - 删除设备及其关联采集数据
-- 将选中设备的 `id` 和 `master_key` 直接写入目标设备目录
+- 将选中设备的 `id` 和 `master_key` 写入目标设备目录
+- 从目标设备目录读取 `id` 和 `master_key` 并导入数据库
 
-### 3. SQL 控制台
-
-支持以下功能：
+### SQL 控制台
 
 - 在多行输入框中编写 SQL
 - 执行 SQL 语句
@@ -243,23 +242,41 @@ WHERE device_id = 1;
 
 ## 设备配置与分配
 
-设备端运行依赖以下两个配置文件：
+设备端运行依赖以下两个文件：
 
 - `device/encryptor/id`
 - `device/encryptor/master_key`
 
-服务端可在图形界面中直接分配新设备：
+生成设备凭据有两种方式：
 
-1. 点击“分配新设备”
+### 方式一：使用服务端图形界面
+
+1. 在“设备管理”中点击“分配新设备”
 2. 输入备注，可留空
-3. 服务端自动生成新的设备 ID
-4. 服务端自动生成 16 字节主密钥
-5. 新设备信息写入数据库
+3. 服务端自动生成设备 ID 和 16 字节主密钥
+4. 如需写入设备目录，选中设备后点击“写入设备目录”
 
-设备管理页提供“写入设备目录”按钮。选择目标 `device` 目录后，程序会自动覆盖写入：
+服务端也支持反向导入：
 
-- `device/encryptor/id`
-- `device/encryptor/master_key`
+1. 在“设备管理”中点击“从设备目录导入”
+2. 选择 `device` 目录或 `device/encryptor` 目录
+3. 服务端读取其中的 `id` 和 `master_key`
+4. 若设备 ID 已存在，则拒绝导入并提示错误
+
+### 方式二：在设备目录生成凭据
+
+运行以下脚本：
+
+```powershell
+device\encryptor\generate_key.bat
+```
+
+脚本会直接在 `device/encryptor/` 下生成：
+
+- `id`
+- `master_key`
+
+如果需要让服务端识别该设备，可再通过图形界面的“从设备目录导入”将其写入数据库。
 
 ## 协议说明
 
@@ -364,16 +381,8 @@ sent packet timestamp=1775822528 samples=2 padded=6
 - 清空数据库操作默认仅清空采集数据，不删除设备与主密钥
 - 同一批次有效数据在数据库中按时间升序保存
 
-如果需要更严格贴近题面，可使用：
+如需更严格的时间误差限制，可使用：
 
 ```powershell
 pixi run server --max-time-skew 5 --replay-ttl 10
 ```
-
-## 已验证内容
-
-- `device/` 与 `server/` 模块可以正常编译
-- 数据库可以创建、查询和更新设备信息
-- 服务端可动态读取数据库中的主密钥处理 UDP 报文
-- 设备端报文可被服务端正确解析、解密并入库
-- 图形界面所依赖的数据层和服务端主流程已联通
