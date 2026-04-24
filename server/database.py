@@ -185,6 +185,20 @@ class ServerDatabase:
             )
             return cursor.rowcount if cursor.rowcount != -1 else 0
 
+    def get_measurement_value(self, device_id: int, timestamp: int) -> float | None:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT value
+                FROM measurements
+                WHERE device_id = ? AND timestamp = ?
+                """,
+                (device_id, timestamp),
+            ).fetchone()
+        if row is None:
+            return None
+        return float(row["value"])
+
     def query_measurements(
         self,
         device_id: int | None = None,

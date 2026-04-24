@@ -41,8 +41,8 @@ def build_parser() -> argparse.ArgumentParser:
 
 def run_device(host: str, port: int, sync_interval: int, device_dir: Path) -> None:
     clock = DeviceClock(sync_interval=sync_interval)
-    sensor = TemperatureSensor()
     encryptor = DeviceEncryptor(device_dir=device_dir)
+    sensor = TemperatureSensor(device_id=encryptor.device_id)
     network = DeviceNetworkClient(host=host, port=port)
     buffer: deque[int] = deque(maxlen=BUFFER_SIZE)
 
@@ -53,7 +53,7 @@ def run_device(host: str, port: int, sync_interval: int, device_dir: Path) -> No
     try:
         while True:
             timestamp = clock.wait_next_timestamp()
-            sample = sensor.read_encoded()
+            sample = sensor.read_encoded(timestamp)
             buffer.append(sample)
             LOGGER.debug("sampled timestamp=%s encoded=%s", timestamp, sample)
 

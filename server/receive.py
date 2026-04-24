@@ -16,6 +16,7 @@ from server.sm4_gcm import decrypt
 from server.udp import UDPPacket
 
 LOGGER = logging.getLogger(__name__)
+MAX_TEMPERATURE_DELTA = 0.2
 
 
 class UDPServer:
@@ -68,12 +69,12 @@ class UDPServer:
         packet = UDPPacket.from_bytes(data)
         self._validate_timestamp(packet.timestamp)
 
+        if self.cache.contains(packet.device_id, packet.timestamp):
+            raise ValueError("replay packet detected")
+
         master_key = self.database.get_master_key(packet.device_id)
         if master_key is None:
             raise ValueError(f"unknown device id {packet.device_id}")
-
-        if self.cache.contains(packet.device_id, packet.timestamp):
-            raise ValueError("replay packet detected")
 
         aad = struct.pack(">II", packet.device_id, packet.timestamp)
         hour_key = derive_hour_key(master_key, packet.timestamp // 3600)
@@ -83,6 +84,7 @@ class UDPServer:
             raise ValueError("invalid GCM tag") from exc
 
         measurements = self._parse_measurements(packet.device_id, packet.timestamp, plaintext)
+        self._warn_large_temperature_delta(packet.device_id, measurements)
         stored_count = self.database.append_measurements(measurements)
         self.cache.add(packet.device_id, packet.timestamp)
 
@@ -105,9 +107,6 @@ class UDPServer:
             raise ValueError("timestamp must satisfy timestamp % 8 == 0")
 
     def _parse_measurements(self, device_id: int, timestamp: int, plaintext: bytes) -> list[StoredMeasurement]:
-        if len(plaintext) != 16:
-            raise ValueError("plaintext must be 16 bytes")
-
         measurements: list[StoredMeasurement] = []
         encoded_values = struct.unpack(">8H", plaintext)
         for offset, encoded in enumerate(encoded_values):
@@ -123,3 +122,32 @@ class UDPServer:
             )
         measurements.sort(key=lambda item: item.timestamp)
         return measurements
+
+    def _warn_large_temperature_delta(self, device_id: int, measurements: list[StoredMeasurement]) -> None:
+        if not measurements:
+            return
+
+        first_timestamp = measurements[0].timestamp
+        known_values: dict[int, float] = {}
+
+        previous_value = self.database.get_measurement_value(device_id, first_timestamp - 1)
+        if previous_value is not None:
+            known_values[first_timestamp - 1] = previous_value
+
+        for measurement in measurements:
+            previous_timestamp = measurement.timestamp - 1
+            previous_measurement_value = known_values.get(previous_timestamp)
+            if previous_measurement_value is not None:
+                delta = abs(measurement.value - previous_measurement_value)
+                if delta > MAX_TEMPERATURE_DELTA:
+                    self._emit(
+                        "warning",
+                        "temperature jump detected for device=%s between timestamp=%s and timestamp=%s: %.1f -> %.1f",
+                        device_id,
+                        previous_timestamp,
+                        measurement.timestamp,
+                        previous_measurement_value,
+                        measurement.value,
+                    )
+
+            known_values[measurement.timestamp] = measurement.value

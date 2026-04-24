@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import struct
 
-MAX_ENCODED = 0x07CF
+MAX_ENCODED = 0x07CE
 PADDING_VALUE = 0xFFFF
 MIN_TEMP = -99.9
 MAX_TEMP = 99.9
