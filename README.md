@@ -1,5 +1,7 @@
 # sm4-iot-secure
 
+[English](./README-en.md) | 简体中文
+
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
 ![Pixi](https://img.shields.io/badge/Env-pixi-6D28D9)
 ![Crypto](https://img.shields.io/badge/Crypto-SM4--GCM%20%2B%20HMAC--SM3-0F766E)
