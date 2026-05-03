@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import argparse
 import logging
+import sys
 from collections import deque
 from pathlib import Path
+from tkinter import messagebox
+
+import tkinter as tk
 
 from device.encryptor.encryptor import DeviceEncryptor
 from device.network.network import DeviceNetworkClient
@@ -37,6 +41,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="logging level",
     )
     return parser
+
+
+def _show_startup_error(message: str) -> None:
+    if getattr(sys, "frozen", False):
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            messagebox.showerror("SM4 IoT Secure Device", message)
+            root.destroy()
+            return
+        except Exception:
+            pass
+
+    print(message, file=sys.stderr)
+    if getattr(sys, "frozen", False):
+        try:
+            input("Press Enter to exit...")
+        except EOFError:
+            pass
 
 
 def run_device(host: str, port: int, sync_interval: int, device_dir: Path) -> None:
@@ -87,12 +110,16 @@ def main() -> None:
         level=getattr(logging, args.log_level),
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
-    run_device(
-        host=args.host,
-        port=args.port,
-        sync_interval=args.sync_interval,
-        device_dir=args.device_dir,
-    )
+    try:
+        run_device(
+            host=args.host,
+            port=args.port,
+            sync_interval=args.sync_interval,
+            device_dir=args.device_dir,
+        )
+    except Exception as exc:
+        _show_startup_error(f"Failed to start device: {exc}")
+        raise SystemExit(1) from exc
 
 
 if __name__ == "__main__":

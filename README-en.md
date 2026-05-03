@@ -77,6 +77,23 @@ Device:
 pixi run device --host 127.0.0.1 --port 9999 --sync-interval 60
 ```
 
+### Build Environment
+
+The project also provides a separate `build` environment for packaging tools such as `PyInstaller`, so the default runtime environment stays clean.
+
+Install the `build` environment:
+
+```powershell
+pixi install -e build
+```
+
+Run the package tasks:
+
+```powershell
+pixi run -e build build-server
+pixi run -e build build-device
+```
+
 ## Project Structure
 
 ### Repository Files
@@ -89,6 +106,8 @@ sm4-iot-secure/
 ├── pixi.lock                       # pixi lock file
 ├── README.md                       # Chinese documentation
 ├── README-en.md                    # English documentation
+├── server.spec                     # PyInstaller spec for the server
+├── device.spec                     # PyInstaller spec for the device
 ├── device/                         # Device-side code
 │   ├── __init__.py                 # Package marker
 │   ├── main.py                     # Device entry point: sampling, buffering, encryption, sending
@@ -137,6 +156,10 @@ sm4-iot-secure/
   - SQLite WAL file
 - `server/gui_state.json`
   - Saved GUI filter and sort state
+- `build/`
+  - PyInstaller intermediate build directory
+- `dist/`
+  - Final PyInstaller output directory
 
 ## Database Storage
 
@@ -204,6 +227,15 @@ Displayed columns:
 - Delete a device and its associated measurements
 - Write the selected device's `id` and `master_key` into a device directory
 - Import `id` and `master_key` from a device directory into the database
+
+Device import/export supports both layouts:
+
+- Source-code layout
+  - `device/encryptor/id`
+  - `device/encryptor/master_key`
+- PyInstaller packaged device release directory
+  - `device/_internal/encryptor/id`
+  - `device/_internal/encryptor/master_key`
 
 ### SQL Console
 

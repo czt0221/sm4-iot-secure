@@ -13,6 +13,10 @@ extra-index-urls = ["https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple", "htt
 server = "python -m server.main"
 device = "python -m device.main"
 
+[feature.build.tasks]
+build-server = "pyinstaller server.spec"
+build-device = "pyinstaller device.spec"
+
 [dependencies]
 python = ">=3.14.4,<3.15"
 cryptography = ">=46.0.7,<47"
@@ -20,3 +24,9 @@ cryptography = ">=46.0.7,<47"
 [pypi-dependencies]
 pyntp = ">=0.1.1, <0.2"
 tkcalendar = ">=1.6.1, <2"
+
+[feature.build.dependencies]
+pyinstaller = ">=6.20.0, <6.21"
+
+[environments]
+build = ["build"]

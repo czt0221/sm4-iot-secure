@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import queue
+import sys
 import threading
 import tkinter as tk
 from datetime import date, datetime, time as dt_time
@@ -19,6 +20,16 @@ ALL_DEVICES_LABEL = "全部设备"
 
 def _parse_date_value(value: str) -> date:
     return date.fromisoformat(value)
+
+
+def _resolve_device_encryptor_dir(base_dir: Path) -> Path:
+    if base_dir.name == "encryptor":
+        return base_dir
+
+    if getattr(sys, "frozen", False) or (base_dir / "device.exe").exists():
+        return base_dir / "_internal" / "encryptor"
+
+    return base_dir / "encryptor"
 
 
 class ServerGUI:
@@ -783,7 +794,7 @@ class ServerGUI:
             return
 
         base_dir = Path(chosen_dir)
-        target_dir = base_dir if base_dir.name == "encryptor" else base_dir / "encryptor"
+        target_dir = _resolve_device_encryptor_dir(base_dir)
         target_dir.mkdir(parents=True, exist_ok=True)
 
         (target_dir / "id").write_text(f"{device_id}\n", encoding="utf-8")
@@ -801,7 +812,7 @@ class ServerGUI:
             return
 
         base_dir = Path(chosen_dir)
-        source_dir = base_dir if base_dir.name == "encryptor" else base_dir / "encryptor"
+        source_dir = _resolve_device_encryptor_dir(base_dir)
         id_path = source_dir / "id"
         key_path = source_dir / "master_key"
 

@@ -77,6 +77,23 @@ pixi run server --headless
 pixi run device --host 127.0.0.1 --port 9999 --sync-interval 60
 ```
 
+### 打包环境
+
+项目额外提供一个 `build` 环境，用于放置 `PyInstaller` 这类构建工具，而不污染默认运行环境。
+
+安装 `build` 环境：
+
+```powershell
+pixi install -e build
+```
+
+执行打包：
+
+```powershell
+pixi run -e build build-server
+pixi run -e build build-device
+```
+
 ## 项目结构
 
 ### 仓库文件
@@ -88,6 +105,9 @@ sm4-iot-secure/
 ├── pixi.toml                       # pixi 环境、依赖和任务定义
 ├── pixi.lock                       # pixi 锁文件
 ├── README.md                       # 项目说明文档
+├── README-en.md                    # 英文说明文档
+├── server.spec                     # 服务端 PyInstaller 打包配置
+├── device.spec                     # 设备端 PyInstaller 打包配置
 ├── device/                         # 设备端代码
 │   ├── __init__.py                 # 设备端包标记
 │   ├── main.py                     # 设备端主入口，负责采样、缓存、加密、发送
@@ -136,6 +156,10 @@ sm4-iot-secure/
   - SQLite WAL 日志文件
 - `server/gui_state.json`
   - GUI 保存的上次设备筛选与排序状态
+- `build/`
+  - PyInstaller 构建中间文件目录
+- `dist/`
+  - PyInstaller 最终打包输出目录
 
 ## 数据库存储
 
@@ -203,6 +227,15 @@ server/server.db
 - 删除设备及其关联采集数据
 - 将选中设备的 `id` 和 `master_key` 写入目标设备目录
 - 从目标设备目录读取 `id` 和 `master_key` 并导入数据库
+
+设备目录导入导出同时兼容两种布局：
+
+- 源码运行目录
+  - `device/encryptor/id`
+  - `device/encryptor/master_key`
+- PyInstaller 打包后的设备发布目录
+  - `device/_internal/encryptor/id`
+  - `device/_internal/encryptor/master_key`
 
 ### SQL 控制台
 
