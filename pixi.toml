@@ -15,7 +15,7 @@ device = "python -m device.main"
 
 [feature.build.tasks]
 build-server = "pyinstaller server.spec"
-build-device = "pyinstaller device.spec"
+build-device = "pyinstaller device.spec && cmd /c copy /Y device\\encryptor\\generate_key.bat dist\\device\\generate_key.bat && powershell -Command \"(Get-Content 'dist\\device\\generate_key.bat') -replace 'set \\\"TARGET_DIR=%~dp0\\\"', 'set \\\"TARGET_DIR=%~dp0_internal\\encryptor\\\\\"' | Set-Content 'dist\\device\\generate_key.bat'\""
 
 [dependencies]
 python = ">=3.14.4,<3.15"
