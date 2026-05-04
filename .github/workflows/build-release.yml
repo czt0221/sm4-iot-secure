@@ -1,0 +1,52 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install pixi
+        uses: prefix-dev/setup-pixi@v0
+        with:
+          pixi-version: v0.65.0
+          environments: build
+
+      - name: Build server
+        run: pixi run -e build build-server
+
+      - name: Build device
+        run: pixi run -e build build-device
+
+      - name: Prepare release
+        shell: bash
+        run: |
+          projectName="sm4-iot-secure"
+          version="${{ github.ref_name }}"
+          platform="windows"
+          arch="x86_64"
+          mkdir -p ./release
+          for dir in ./dist/*/; do
+            dir=$(basename "$dir")
+            cd ./dist/${dir}
+            7z a -tzip "../../release/${projectName}-${dir}-${version}-${platform}-${arch}.zip" . -r
+            cd ../../
+          done
+
+      - name: Create release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: ./release/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

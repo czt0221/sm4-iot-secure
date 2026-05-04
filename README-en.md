@@ -1,12 +1,19 @@
-# sm4-iot-secure
+<div align="center">
 
-English | [简体中文](./README.md)
+# sm4-iot-secure
 
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
 ![Pixi](https://img.shields.io/badge/Env-pixi-6D28D9)
 ![Crypto](https://img.shields.io/badge/Crypto-SM4--GCM%20%2B%20HMAC--SM3-0F766E)
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)
 ![GUI](https://img.shields.io/badge/GUI-tkinter%20%2B%20tkcalendar-1F2937)
+[![Release](https://img.shields.io/github/v/release/czt0221/sm4-iot-secure)](https://github.com/czt0221/sm4-iot-secure/releases/latest)
+
+[![Download](https://img.shields.io/badge/Download-Latest%20Release-2ea44f?style=for-the-badge)](https://github.com/czt0221/sm4-iot-secure/releases/latest)
+
+English | [简体中文](./README.md)
+
+</div>
 
 `sm4-iot-secure` is a Python-based IoT secure communication demo focused on secure transmission of temperature data. It includes an encrypted device-side sender, UDP communication, gradual time synchronization, and a server-side receiver with validation, decryption, database storage, and a graphical management interface.
 

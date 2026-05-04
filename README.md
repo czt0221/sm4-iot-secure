@@ -1,12 +1,19 @@
-# sm4-iot-secure
+<div align="center">
 
-[English](./README-en.md) | 简体中文
+# sm4-iot-secure
 
 ![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)
 ![Pixi](https://img.shields.io/badge/Env-pixi-6D28D9)
 ![Crypto](https://img.shields.io/badge/Crypto-SM4--GCM%20%2B%20HMAC--SM3-0F766E)
 ![Database](https://img.shields.io/badge/Database-SQLite-003B57?logo=sqlite&logoColor=white)
 ![GUI](https://img.shields.io/badge/GUI-tkinter%20%2B%20tkcalendar-1F2937)
+[![Release](https://img.shields.io/github/v/release/czt0221/sm4-iot-secure)](https://github.com/czt0221/sm4-iot-secure/releases/latest)
+
+[![Download](https://img.shields.io/badge/Download-Latest%20Release-2ea44f?style=for-the-badge)](https://github.com/czt0221/sm4-iot-secure/releases/latest)
+
+[English](./README-en.md) | 简体中文
+
+</div>
 
 `sm4-iot-secure` 是一个基于 Python 的物联网安全通信示例项目，围绕温度数据的安全传输实现设备端加密发送、UDP 通信、渐进式时间同步，以及服务端验包、解密、入库和图形化管理。
 
