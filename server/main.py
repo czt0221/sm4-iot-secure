@@ -46,6 +46,15 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    import ctypes
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+    except (AttributeError, OSError):
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()
+        except (AttributeError, OSError):
+            pass
+
     args = build_parser().parse_args()
     logging.basicConfig(
         level=getattr(logging, args.log_level),

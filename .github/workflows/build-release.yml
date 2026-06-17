@@ -10,7 +10,14 @@ permissions:
 
 jobs:
   build-release:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest]
+        include:
+          - os: windows-latest
+            platform: windows
+            arch: x86_64
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -20,27 +27,41 @@ jobs:
         uses: prefix-dev/setup-pixi@v0
         with:
           pixi-version: v0.65.0
-          environments: build
+          cache: true
 
-      - name: Build server
-        run: pixi run -e build build-server
-
-      - name: Build device
-        run: pixi run -e build build-device
+      - name: Build
+        run: pixi run build
 
       - name: Prepare release
         shell: bash
         run: |
-          projectName="sm4-iot-secure"
+          projectName="${{ github.event.repository.name }}"
           version="${{ github.ref_name }}"
-          platform="windows"
-          arch="x86_64"
+          platform="${{ matrix.platform }}"
+          arch="${{ matrix.arch }}"
           mkdir -p ./release
-          for dir in ./dist/*/; do
-            dir=$(basename "$dir")
-            cd ./dist/${dir}
-            7z a -tzip "../../release/${projectName}-${dir}-${version}-${platform}-${arch}.zip" . -r
-            cd ../../
+          for dir in ./dist/*; do
+            base_dir="$(basename "$dir")"
+            if [[ -f "$dir" ]]; then
+              if [[ "$base_dir" == *.* ]]; then
+                mv "$dir" "./release/${projectName}-${base_dir%%.*}-${version}-${platform}-${arch}.${base_dir#*.}"
+              else
+                if [ "${platform}" = "windows" ]; then
+                  mv "$dir" "./release/${projectName}-${base_dir}-${version}-${platform}-${arch}"
+                else
+                  tar czf "./release/${projectName}-${base_dir}-${version}-${platform}-${arch}.tar.gz" -C "./dist" "$base_dir"
+                fi
+              fi
+            elif [[ -d "$dir" ]]; then
+              if [ "${platform}" = "windows" ]; then
+                (
+                    cd "${dir}"
+                    7z a -tzip "../../release/${projectName}-${base_dir}-${version}-${platform}-${arch}.zip" . -r
+                )
+              else
+                tar czf "./release/${projectName}-${base_dir}-${version}-${platform}-${arch}.tar.gz" -C "${dir}" .
+              fi
+            fi
           done
 
       - name: Create release

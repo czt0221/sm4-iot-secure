@@ -2,10 +2,17 @@
 
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 
 PROJECT_ROOT = Path(SPECPATH).resolve()
+
+datas = []
+datas += collect_data_files("ttkbootstrap_icons_lucide")
+
+icon_png = PROJECT_ROOT / "icon.png"
+if icon_png.exists():
+    datas.append((str(icon_png), "."))
 
 hiddenimports = []
 hiddenimports += collect_submodules("tkcalendar")
@@ -16,7 +23,7 @@ a = Analysis(
     ["server/main.py"],
     pathex=[str(PROJECT_ROOT)],
     binaries=[],
-    datas=[],
+    datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},

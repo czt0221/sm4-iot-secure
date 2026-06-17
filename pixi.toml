@@ -14,6 +14,7 @@ server = "python -m server.main"
 device = "python -m device.main"
 
 [feature.build.tasks]
+build = "pixi run build-server && pixi run build-device"
 build-server = "pyinstaller server.spec"
 build-device = "pyinstaller device.spec && cmd /c copy /Y device\\encryptor\\generate_key.bat dist\\device\\generate_key.bat && powershell -Command \"(Get-Content 'dist\\device\\generate_key.bat') -replace 'set \\\"TARGET_DIR=%~dp0\\\"', 'set \\\"TARGET_DIR=%~dp0_internal\\encryptor\\\\\"' | Set-Content 'dist\\device\\generate_key.bat'\""
 
@@ -24,6 +25,7 @@ cryptography = ">=46.0.7,<47"
 [pypi-dependencies]
 pyntp = ">=0.1.1, <0.2"
 tkcalendar = ">=1.6.1, <2"
+ttkbootstrap-icons-lucide = ">=1.0.0, <2"
 
 [feature.build.dependencies]
 pyinstaller = ">=6.20.0, <6.21"

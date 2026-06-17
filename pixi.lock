@@ -50,11 +50,15 @@ environments:
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/13/e0/f6ccd48a477e1abd566962a7c829c06e0c7cc0fa38717717513da30c90e4/iter_backoff-0.0.0-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/91/f9/6f40c3f736fe5ce6617e91b876ddd189e1edd097f7deb6c95af9bdf908af/json_stock-0.2.6-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/58/8c/41da70f6feaca807357206a376b6de2001b439c7f78f53473a914a6dbd1e/ntplib-0.4.0-py2.py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/cd/8b/601e6566b957ca50e28725cb6c355c59c2c8609751efbecd980db44e0349/pillow-12.2.0-cp314-cp314-win_amd64.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/3b/cf/c2be5d95a1e12e18eb077bcd6849b7672f80fea73496068f6dd047857027/pyntp-0.1.1-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/96/8b/93cb74103f90ac62079f82999bb39d15d25721b0d2e7b9ee55495c130bd9/relpath-3.0.5-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/59/35/131d6a8fc181bbd3106f72439cd3c438e480e935aae6e93bc6657f78a192/rename_lock-0.1.4-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/03/8f/7e0e85375e3b061c0db9ce873acb57d3311fe86e214e9344757a41a050f5/sout-1.2.1-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/e9/d4/9528ea6ecb5d4394f425df651957da6f6a715b41c5b12d43d41888c14394/tkcalendar-1.6.1-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/b0/7e/f610e3d08fc64c419ff6a0c6d0b168e0fe15ad181f45f51ef37ea3f434b7/ttkbootstrap_icons-4.0.0-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/9e/8d/f78aee5ebd32b8badc3ec7b54fc171aacc4b1a815c2a05c150b1a108af7b/ttkbootstrap_icons_lucide-1.0.0-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
   default:
     channels:
     - url: https://conda.anaconda.org/conda-forge/
@@ -94,11 +98,15 @@ environments:
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/13/e0/f6ccd48a477e1abd566962a7c829c06e0c7cc0fa38717717513da30c90e4/iter_backoff-0.0.0-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/91/f9/6f40c3f736fe5ce6617e91b876ddd189e1edd097f7deb6c95af9bdf908af/json_stock-0.2.6-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/58/8c/41da70f6feaca807357206a376b6de2001b439c7f78f53473a914a6dbd1e/ntplib-0.4.0-py2.py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/cd/8b/601e6566b957ca50e28725cb6c355c59c2c8609751efbecd980db44e0349/pillow-12.2.0-cp314-cp314-win_amd64.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/3b/cf/c2be5d95a1e12e18eb077bcd6849b7672f80fea73496068f6dd047857027/pyntp-0.1.1-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/96/8b/93cb74103f90ac62079f82999bb39d15d25721b0d2e7b9ee55495c130bd9/relpath-3.0.5-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/59/35/131d6a8fc181bbd3106f72439cd3c438e480e935aae6e93bc6657f78a192/rename_lock-0.1.4-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/03/8f/7e0e85375e3b061c0db9ce873acb57d3311fe86e214e9344757a41a050f5/sout-1.2.1-py3-none-any.whl
       - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/e9/d4/9528ea6ecb5d4394f425df651957da6f6a715b41c5b12d43d41888c14394/tkcalendar-1.6.1-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/b0/7e/f610e3d08fc64c419ff6a0c6d0b168e0fe15ad181f45f51ef37ea3f434b7/ttkbootstrap_icons-4.0.0-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/9e/8d/f78aee5ebd32b8badc3ec7b54fc171aacc4b1a815c2a05c150b1a108af7b/ttkbootstrap_icons_lucide-1.0.0-py3-none-any.whl
+      - pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/noarch/altgraph-0.17.5-pyhd8ed1ab_0.conda
   sha256: 71da91de7002924723f6b0984ba65357df3472ab5a3bfa1ea8aace2ee2cb548c
@@ -385,6 +393,38 @@ packages:
   - pkg:pypi/pefile?source=hash-mapping
   size: 66610
   timestamp: 1675867719479
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/cd/8b/601e6566b957ca50e28725cb6c355c59c2c8609751efbecd980db44e0349/pillow-12.2.0-cp314-cp314-win_amd64.whl
+  name: pillow
+  version: 12.2.0
+  sha256: 4e6c62e9d237e9b65fac06857d511e90d8461a32adcc1b9065ea0c0fa3a28150
+  requires_dist:
+  - furo ; extra == 'docs'
+  - olefile ; extra == 'docs'
+  - sphinx>=8.2 ; extra == 'docs'
+  - sphinx-autobuild ; extra == 'docs'
+  - sphinx-copybutton ; extra == 'docs'
+  - sphinx-inline-tabs ; extra == 'docs'
+  - sphinxext-opengraph ; extra == 'docs'
+  - olefile ; extra == 'fpx'
+  - olefile ; extra == 'mic'
+  - arro3-compute ; extra == 'test-arrow'
+  - arro3-core ; extra == 'test-arrow'
+  - nanoarrow ; extra == 'test-arrow'
+  - pyarrow ; extra == 'test-arrow'
+  - check-manifest ; extra == 'tests'
+  - coverage>=7.4.2 ; extra == 'tests'
+  - defusedxml ; extra == 'tests'
+  - markdown2 ; extra == 'tests'
+  - olefile ; extra == 'tests'
+  - packaging ; extra == 'tests'
+  - pyroma>=5 ; extra == 'tests'
+  - pytest ; extra == 'tests'
+  - pytest-cov ; extra == 'tests'
+  - pytest-timeout ; extra == 'tests'
+  - pytest-xdist ; extra == 'tests'
+  - trove-classifiers>=2024.10.12 ; extra == 'tests'
+  - defusedxml ; extra == 'xmp'
+  requires_python: '>=3.10'
 - conda: https://conda.anaconda.org/conda-forge/noarch/pycparser-2.22-pyh29332c3_1.conda
   sha256: 79db7928d13fab2d892592223d7570f5061c192f27b9febd1a418427b719acc6
   md5: 12c566707c80111f9799308d9e265aef
@@ -556,6 +596,27 @@ packages:
   sha256: 9d3a80816a7b32d64fab696fa3d2a007fb23c87953267d5e343a38ff4cd7c15c
   requires_dist:
   - babel
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/b0/7e/f610e3d08fc64c419ff6a0c6d0b168e0fe15ad181f45f51ef37ea3f434b7/ttkbootstrap_icons-4.0.0-py3-none-any.whl
+  name: ttkbootstrap-icons
+  version: 4.0.0
+  sha256: 75ac2a2205be559a348bc6df037976f02e9a0cf4058e3ed037ddf2520dfa8cfd
+  requires_dist:
+  - pillow>=9.1.0
+  - typing-extensions>=4.7.1
+  requires_python: '>=3.10'
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/9e/8d/f78aee5ebd32b8badc3ec7b54fc171aacc4b1a815c2a05c150b1a108af7b/ttkbootstrap_icons_lucide-1.0.0-py3-none-any.whl
+  name: ttkbootstrap-icons-lucide
+  version: 1.0.0
+  sha256: 4464b8229f41b8df9910e6488436fda818eabf7aa63ecaa4483cc04ea87347b2
+  requires_dist:
+  - pillow>=9.1
+  - ttkbootstrap-icons>=3.0.0
+  requires_python: '>=3.10'
+- pypi: https://mirrors.tuna.tsinghua.edu.cn/pypi/web/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl
+  name: typing-extensions
+  version: 4.15.0
+  sha256: f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548
+  requires_python: '>=3.9'
 - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2025c-hc9c84f9_1.conda
   sha256: 1d30098909076af33a35017eed6f2953af1c769e273a0626a04722ac4acaba3c
   md5: ad659d0a2b3e47e38d829aa8cad2d610

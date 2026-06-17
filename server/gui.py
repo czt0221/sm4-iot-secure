@@ -10,6 +10,7 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
 from tkcalendar import DateEntry
+from ttkbootstrap_icons_lucide import LucideIcon
 
 from server.database import DeviceRecord, MeasurementRecord, ServerDatabase
 from server.receive import UDPServer
@@ -64,6 +65,16 @@ class ServerGUI:
 
         self.root = tk.Tk()
         self.root.title("SM4 IoT Secure Server")
+        self.file_path = Path(__file__).parent.parent / "icon.png"
+        if self.file_path.exists():
+            try:
+                self.icon_image = tk.PhotoImage(file=str(self.file_path))
+                self.root.iconphoto(True, self.icon_image)
+            except Exception as e:
+                print(f"{str(self.file_path)}加载失败: {e}")
+        else:
+            self.icon = LucideIcon("server", size=256, color="#333")
+            self.root.iconphoto(True, self.icon.image)
         self.root.geometry("1240x780")
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
         self.root.bind("<Return>", self._on_commit_time_input, add="+")
