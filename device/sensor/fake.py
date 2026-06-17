@@ -28,26 +28,41 @@ def _triangle_wave(position: float) -> float:
 
 
 def generate_fake_temperature(device_id: int, timestamp: int) -> float:
-    annual_phase = (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_YEAR * 2.0 * math.pi
-    daily_phase = (timestamp % SECONDS_PER_DAY) / SECONDS_PER_DAY * 2.0 * math.pi
+    annual_phase = (
+        (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_YEAR * 2.0 * math.pi
+    )
+    daily_phase = (
+        (timestamp % SECONDS_PER_DAY) / SECONDS_PER_DAY * 2.0 * math.pi
+    )
 
-    # January is the coldest period in North China, so shift the yearly peak into midsummer.
-    annual = ANNUAL_BASELINE + ANNUAL_AMPLITUDE * math.sin(annual_phase - math.pi / 2.0)
+    # 华北地区1月最冷，将年峰值偏移至仲夏
+    annual = (
+        ANNUAL_BASELINE
+        + ANNUAL_AMPLITUDE * math.sin(annual_phase - math.pi / 2.0)
+    )
 
-    # Peak temperature occurs around 14:00.
-    daily = DAILY_AMPLITUDE * math.sin(daily_phase - math.pi / 3.0)
+    # 最高温出现在14时左右
+    daily = (
+        DAILY_AMPLITUDE * math.sin(daily_phase - math.pi / 3.0)
+    )
 
-    # Each device keeps a stable offset and phase, so different devices are similar but not identical.
+    # 不同设备保持固定偏移与相位，使同类设备数据相似但不完全相同
     device_offset = ((device_id * 17) % 31) / 10.0 - 1.5
 
     special = (
-        0.7 * math.sin(timestamp / (3 * SECONDS_PER_DAY) * 2.0 * math.pi + _device_phase(device_id, 37, 360))
-        + 0.5 * math.sin(timestamp / (7 * SECONDS_PER_DAY) * 2.0 * math.pi + _device_phase(device_id, 91, 360))
+        0.7 * math.sin(timestamp / (3 * SECONDS_PER_DAY) * 2.0 * math.pi
+                       + _device_phase(device_id, 37, 360))
+        + 0.5 * math.sin(timestamp / (7 * SECONDS_PER_DAY) * 2.0 * math.pi
+                         + _device_phase(device_id, 91, 360))
     )
 
-    # Add a short-period triangular component so rounded values still vary in a 10-second window.
-    triangle = MICRO_AMPLITUDE * _triangle_wave(timestamp / 20.0 + device_id * 0.137)
-    ripple = 0.06 * math.sin(timestamp / 16.0 * 2.0 * math.pi + _device_phase(device_id, 71, 360))
+    # 短周期三角波微扰，确保取整后数据在10秒窗口内仍有变化
+    triangle = MICRO_AMPLITUDE * _triangle_wave(
+        timestamp / 20.0 + device_id * 0.137
+    )
+    ripple = 0.06 * math.sin(
+        timestamp / 16.0 * 2.0 * math.pi + _device_phase(device_id, 71, 360)
+    )
     micro = triangle + ripple
 
     value = annual + daily + device_offset + SPECIAL_AMPLITUDE * special + micro

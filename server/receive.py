@@ -31,7 +31,9 @@ class UDPServer:
     ) -> None:
         self.database = database
         self.max_time_skew = max_time_skew
-        self.replay_ttl = replay_ttl if replay_ttl is not None else max(10, max_time_skew * 2)
+        self.replay_ttl = (
+            replay_ttl if replay_ttl is not None else max(10, max_time_skew * 2)
+        )
         self.cache = ReplayCache(ttl_seconds=self.replay_ttl)
         self._event_callback = event_callback
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -79,11 +81,15 @@ class UDPServer:
         aad = struct.pack(">II", packet.device_id, packet.timestamp)
         hour_key = derive_hour_key(master_key, packet.timestamp // 3600)
         try:
-            plaintext = decrypt(hour_key, packet.iv, aad, packet.ciphertext, packet.tag)
+            plaintext = decrypt(
+                hour_key, packet.iv, aad, packet.ciphertext, packet.tag
+            )
         except InvalidTag as exc:
             raise ValueError("invalid GCM tag") from exc
 
-        measurements = self._parse_measurements(packet.device_id, packet.timestamp, plaintext)
+        measurements = self._parse_measurements(
+            packet.device_id, packet.timestamp, plaintext
+        )
         self._warn_large_temperature_delta(packet.device_id, measurements)
         stored_count = self.database.append_measurements(measurements)
         self.cache.add(packet.device_id, packet.timestamp)
@@ -97,16 +103,24 @@ class UDPServer:
                 packet.timestamp,
             )
         else:
-            self._emit("warning", "received packet with no storable data from device=%s", packet.device_id)
+            self._emit(
+                "warning",
+                "received packet with no storable data from device=%s",
+                packet.device_id,
+            )
 
     def _validate_timestamp(self, timestamp: int) -> None:
         current_time = int(time.time())
         if abs(current_time - timestamp) > self.max_time_skew:
-            raise ValueError(f"timestamp outside {self.max_time_skew}-second tolerance")
+            raise ValueError(
+                f"timestamp outside {self.max_time_skew}-second tolerance"
+            )
         if timestamp % 8 != 0:
             raise ValueError("timestamp must satisfy timestamp % 8 == 0")
 
-    def _parse_measurements(self, device_id: int, timestamp: int, plaintext: bytes) -> list[StoredMeasurement]:
+    def _parse_measurements(
+        self, device_id: int, timestamp: int, plaintext: bytes
+    ) -> list[StoredMeasurement]:
         measurements: list[StoredMeasurement] = []
         encoded_values = struct.unpack(">8H", plaintext)
         for offset, encoded in enumerate(encoded_values):
@@ -123,14 +137,18 @@ class UDPServer:
         measurements.sort(key=lambda item: item.timestamp)
         return measurements
 
-    def _warn_large_temperature_delta(self, device_id: int, measurements: list[StoredMeasurement]) -> None:
+    def _warn_large_temperature_delta(
+        self, device_id: int, measurements: list[StoredMeasurement]
+    ) -> None:
         if not measurements:
             return
 
         first_timestamp = measurements[0].timestamp
         known_values: dict[int, float] = {}
 
-        previous_value = self.database.get_measurement_value(device_id, first_timestamp - 1)
+        previous_value = self.database.get_measurement_value(
+            device_id, first_timestamp - 1
+        )
         if previous_value is not None:
             known_values[first_timestamp - 1] = previous_value
 
@@ -142,7 +160,8 @@ class UDPServer:
                 if delta > MAX_TEMPERATURE_DELTA:
                     self._emit(
                         "warning",
-                        "temperature jump detected for device=%s between timestamp=%s and timestamp=%s: %.1f -> %.1f",
+                        "temperature jump detected for device=%s "
+                        "between timestamp=%s and timestamp=%s: %.1f -> %.1f",
                         device_id,
                         previous_timestamp,
                         measurement.timestamp,

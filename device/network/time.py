@@ -70,7 +70,8 @@ class DeviceClock:
             if current_timestamp > self._last_emitted_timestamp:
                 if current_timestamp > self._last_emitted_timestamp + 1:
                     LOGGER.warning(
-                        "device time advanced faster than sampling loop, smoothing emitted timestamp from %s to %s",
+                        "device time advanced faster than sampling loop, "
+                        "smoothing emitted timestamp from %s to %s",
                         self._last_emitted_timestamp,
                         current_timestamp,
                     )
@@ -78,7 +79,9 @@ class DeviceClock:
                 return self._last_emitted_timestamp
 
             next_boundary = self._last_emitted_timestamp + 1
-            wait_seconds = (next_boundary - self.local_time) / max(self.clock_rate, 1e-6)
+            wait_seconds = (
+                (next_boundary - self.local_time) / max(self.clock_rate, 1e-6)
+            )
             self._sleep(max(0.001, min(0.2, wait_seconds)))
 
     def should_sync(self) -> bool:
@@ -96,7 +99,11 @@ class DeviceClock:
         except Exception as exc:  # pragma: no cover - network dependent
             self._consecutive_sync_failures += 1
             if self._consecutive_sync_failures >= 3:
-                LOGGER.warning("NTP sync failed %s times: %s", self._consecutive_sync_failures, exc)
+                LOGGER.warning(
+                    "NTP sync failed %s times: %s",
+                    self._consecutive_sync_failures,
+                    exc,
+                )
             self._next_sync_due = self._last_monotonic + self.sync_interval
             return
 

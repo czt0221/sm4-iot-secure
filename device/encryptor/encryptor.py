@@ -54,7 +54,9 @@ class DeviceEncryptor:
         plaintext = b"".join(struct.pack(">H", value) for value in values)
         aad = struct.pack(">II", self.device_id, timestamp)
         iv = generate_iv()
-        ciphertext, tag = encrypt(self._hour_key_for(timestamp), iv, aad, plaintext)
+        ciphertext, tag = encrypt(
+            self._hour_key_for(timestamp), iv, aad, plaintext
+        )
         return UDPPacket(
             timestamp=timestamp,
             device_id=self.device_id,

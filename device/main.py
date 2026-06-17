@@ -62,7 +62,9 @@ def _show_startup_error(message: str) -> None:
             pass
 
 
-def run_device(host: str, port: int, sync_interval: int, device_dir: Path) -> None:
+def run_device(
+    host: str, port: int, sync_interval: int, device_dir: Path
+) -> None:
     clock = DeviceClock(sync_interval=sync_interval)
     encryptor = DeviceEncryptor(device_dir=device_dir)
     sensor = TemperatureSensor(device_id=encryptor.device_id)
